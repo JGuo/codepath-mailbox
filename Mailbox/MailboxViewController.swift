@@ -23,11 +23,15 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var archiveIcon: UIImageView!
     @IBOutlet weak var deleteIcon: UIImageView!
     
+    @IBOutlet weak var mainView: UIView!
+    
     
     var messageOriginalCenter: CGPoint!
     var messageOffset: CGFloat!
     var messageLeft: CGPoint!
     var messageRight: CGPoint!
+    
+    var mainViewOriginalCenter: CGPoint!
     
     var feedOffset: CGFloat!
     var feedUp: CGPoint!
@@ -51,6 +55,39 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
         messageLeft = CGPoint(x: message.center.x - messageOffset ,y: message.center.y)
         messageRight = CGPoint(x: message.center.x + messageOffset ,y: message.center.y)
         
+        let edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "onEdgePan:")
+        edgeGesture.edges = UIRectEdge.Left
+        mainView.addGestureRecognizer(edgeGesture)
+        
+    }
+    
+    func onEdgePan(sender: UIScreenEdgePanGestureRecognizer) {
+        print("edge panned")
+        
+        // Absolute (x,y) coordinates in parent view
+        let point = sender.locationInView(view)
+        
+        // Relative change in (x,y) coordinates from where gesture began.
+        let translation = sender.translationInView(view)
+        
+        if sender.state == UIGestureRecognizerState.Began {
+            mainViewOriginalCenter = mainView.center
+            
+        } else if sender.state == UIGestureRecognizerState.Changed {
+            mainView.center = CGPoint(x: mainViewOriginalCenter.x + translation.x, y: mainViewOriginalCenter.y)
+            
+        } else if sender.state == UIGestureRecognizerState.Ended {
+            if translation.x > 60 {
+                UIView.animateWithDuration(0.3, animations: { () -> Void in
+                    self.mainView.center = CGPoint(x: self.mainViewOriginalCenter.x + 285 ,y: self.mainViewOriginalCenter.y)
+                })
+            } else {
+                UIView.animateWithDuration(0.3, animations: { () -> Void in
+                    self.mainView.center = self.mainViewOriginalCenter
+                })
+            }
+            
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -87,7 +124,7 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
         
         // Relative change in (x,y) coordinates from where gesture began.
         let translation = panGestureRecognizer.translationInView(view)
-        let velocity = panGestureRecognizer.velocityInView(view)
+        // let velocity = panGestureRecognizer.velocityInView(view)
         
         
         if panGestureRecognizer.state == UIGestureRecognizerState.Began {
