@@ -24,6 +24,7 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var deleteIcon: UIImageView!
     
     @IBOutlet weak var mainView: UIView!
+    @IBOutlet var dismissPanGestureRecognizer: UIPanGestureRecognizer!
     
     
     var messageOriginalCenter: CGPoint!
@@ -59,6 +60,9 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
         edgeGesture.edges = UIRectEdge.Left
         mainView.addGestureRecognizer(edgeGesture)
         
+        // The onCustomPan: method will be defined in Step 3 below.
+
+        
     }
     
     func onEdgePan(sender: UIScreenEdgePanGestureRecognizer) {
@@ -81,12 +85,44 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
                 UIView.animateWithDuration(0.3, animations: { () -> Void in
                     self.mainView.center = CGPoint(x: self.mainViewOriginalCenter.x + 285 ,y: self.mainViewOriginalCenter.y)
                 })
+                let dismissPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: "onDismissPan:")
+                mainView.addGestureRecognizer(dismissPanGestureRecognizer)
             } else {
                 UIView.animateWithDuration(0.3, animations: { () -> Void in
                     self.mainView.center = self.mainViewOriginalCenter
                 })
             }
             
+        }
+        
+    }
+    
+    func onDismissPan(sender: UIPanGestureRecognizer) {
+        let translation = sender.translationInView(view)
+        
+        if sender.state == UIGestureRecognizerState.Began {
+            print("dismiss")
+            
+        mainViewOriginalCenter = mainView.center
+            
+        } else if sender.state == UIGestureRecognizerState.Changed {
+            self.mainView.center = CGPoint(x: self.mainViewOriginalCenter.x + translation.x ,y: self.mainViewOriginalCenter.y)
+        } else if sender.state == UIGestureRecognizerState.Ended {
+            if translation.x < -60 {
+                UIView.animateWithDuration(0.3, animations: { () -> Void in
+                    self.mainView.center = CGPoint(x: 160 , y: self.mainViewOriginalCenter.y)
+                })
+                print("close menu")
+            } else if translation.x > 60 {
+                UIView.animateWithDuration(0.3, animations: { () -> Void in
+                    self.mainView.center = CGPoint(x: self.mainViewOriginalCenter.x + 285 ,y: self.mainViewOriginalCenter.y)
+                })
+            } else {
+                UIView.animateWithDuration(0.3, animations: { () -> Void in
+                    self.mainView.center = CGPoint(x: self.mainViewOriginalCenter.x ,y: self.mainViewOriginalCenter.y)
+                })
+            }
+
         }
     }
 
@@ -161,6 +197,7 @@ class MailboxViewController: UIViewController, UIScrollViewDelegate {
                     snoozeIcon.alpha = snoozeIconAlpha
                 } else if translation.x > 0 {
                     archiveIcon.alpha = convertValue(translation.x, r1Min:0 , r1Max: 60, r2Min: 0, r2Max: 1)
+                    snoozeIcon.alpha = 0
                 }
             }
             print("Gesture changed at: \(point)")

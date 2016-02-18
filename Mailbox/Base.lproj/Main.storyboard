@@ -117,6 +117,7 @@
                     <connections>
                         <outlet property="archiveIcon" destination="ccu-bq-cVR" id="2UZ-7f-X8c"/>
                         <outlet property="deleteIcon" destination="7Ny-fN-jcm" id="56f-Ck-bN3"/>
+                        <outlet property="dismissPanGestureRecognizer" destination="zz6-kM-e1c" id="y7c-1E-vde"/>
                         <outlet property="feedImage" destination="deF-2q-6VL" id="n83-L2-Z8i"/>
                         <outlet property="feedScrollView" destination="wul-V2-ejW" id="b9P-7q-6eh"/>
                         <outlet property="listIcon" destination="TOs-Zb-nYX" id="UcN-pF-s71"/>
@@ -141,6 +142,7 @@
                         <action selector="listTap:" destination="BYZ-38-t0r" id="yvT-pg-XUe"/>
                     </connections>
                 </tapGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="zz6-kM-e1c"/>
             </objects>
             <point key="canvasLocation" x="138" y="420"/>
         </scene>
